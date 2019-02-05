@@ -72,7 +72,7 @@ public class VirtualCommand
 
 	public boolean hit(CommandSender sender, GList<String> chain)
 	{
-		PhantomSender vs = new PhantomSender(sender);
+		PrimalSender vs = new PrimalSender(sender);
 		vs.setTag(tag);
 
 		if(chain.isEmpty())

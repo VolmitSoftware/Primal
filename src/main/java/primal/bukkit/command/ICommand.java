@@ -51,5 +51,5 @@ public interface ICommand
 	 *            the arguments after this command node
 	 * @return return true to mark it as handled
 	 */
-	public boolean handle(PhantomSender sender, String[] args);
+	public boolean handle(PrimalSender sender, String[] args);
 }

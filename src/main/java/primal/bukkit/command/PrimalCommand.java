@@ -11,9 +11,9 @@ import primal.lang.collection.GList;
  * @author cyberpwn
  *
  */
-public abstract class PhantomCommand implements ICommand
+public abstract class PrimalCommand implements ICommand
 {
-	private GList<PhantomCommand> children;
+	private GList<PrimalCommand> children;
 	private GList<String> nodes;
 	private GList<String> requiredPermissions;
 	private String node;
@@ -28,7 +28,7 @@ public abstract class PhantomCommand implements ICommand
 	 * @param nodes
 	 *            the aliases. i.e. v, vol, bile
 	 */
-	public PhantomCommand(String node, String... nodes)
+	public PrimalCommand(String node, String... nodes)
 	{
 		category = "";
 		this.node = node;
@@ -37,7 +37,7 @@ public abstract class PhantomCommand implements ICommand
 		children = buildChildren();
 	}
 
-	protected void requiresPermission(PhantomPermission node)
+	protected void requiresPermission(PrimalPermission node)
 	{
 		if(node == null)
 		{
@@ -81,14 +81,14 @@ public abstract class PhantomCommand implements ICommand
 		getNodes().add(node);
 	}
 
-	public GList<PhantomCommand> getChildren()
+	public GList<PrimalCommand> getChildren()
 	{
 		return children;
 	}
 
-	private GList<PhantomCommand> buildChildren()
+	private GList<PrimalCommand> buildChildren()
 	{
-		GList<PhantomCommand> p = new GList<>();
+		GList<PrimalCommand> p = new GList<>();
 
 		for(Field i : getClass().getDeclaredFields())
 		{
@@ -97,7 +97,7 @@ public abstract class PhantomCommand implements ICommand
 				try
 				{
 					i.setAccessible(true);
-					PhantomCommand pc = (PhantomCommand) i.getType().getConstructor().newInstance();
+					PrimalCommand pc = (PrimalCommand) i.getType().getConstructor().newInstance();
 					Command c = i.getAnnotation(Command.class);
 
 					if(!c.value().trim().isEmpty())

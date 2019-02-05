@@ -18,7 +18,7 @@ import primal.util.text.C;
  * @author cyberpwn
  *
  */
-public class PhantomSender implements CommandSender
+public class PrimalSender implements CommandSender
 {
 	private CommandSender s;
 	private String tag;
@@ -29,13 +29,13 @@ public class PhantomSender implements CommandSender
 	 * @param s
 	 *            the command sender
 	 */
-	public PhantomSender(CommandSender s)
+	public PrimalSender(CommandSender s)
 	{
 		tag = "";
 		this.s = s;
 	}
 
-	public PhantomSender(CommandSender s, String tag)
+	public PrimalSender(CommandSender s, String tag)
 	{
 		this.tag = tag;
 		this.s = s;

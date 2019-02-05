@@ -6,11 +6,11 @@ import java.lang.reflect.Modifier;
 
 import primal.lang.collection.GList;
 
-public abstract class PhantomPermission
+public abstract class PrimalPermission
 {
-	private PhantomPermission parent;
+	private PrimalPermission parent;
 
-	public PhantomPermission()
+	public PrimalPermission()
 	{
 		for(Field i : getClass().getDeclaredFields())
 		{
@@ -18,7 +18,7 @@ public abstract class PhantomPermission
 			{
 				try
 				{
-					PhantomPermission px = (PhantomPermission) i.getType().getConstructor().newInstance();
+					PrimalPermission px = (PrimalPermission) i.getType().getConstructor().newInstance();
 					px.setParent(this);
 					i.set(Modifier.isStatic(i.getModifiers()) ? null : this, px);
 				}
@@ -31,9 +31,9 @@ public abstract class PhantomPermission
 		}
 	}
 
-	public GList<PhantomPermission> getChildren()
+	public GList<PrimalPermission> getChildren()
 	{
-		GList<PhantomPermission> p = new GList<>();
+		GList<PrimalPermission> p = new GList<>();
 
 		for(Field i : getClass().getDeclaredFields())
 		{
@@ -41,7 +41,7 @@ public abstract class PhantomPermission
 			{
 				try
 				{
-					p.add((PhantomPermission) i.get(Modifier.isStatic(i.getModifiers()) ? null : this));
+					p.add((PrimalPermission) i.get(Modifier.isStatic(i.getModifiers()) ? null : this));
 				}
 
 				catch(IllegalArgumentException | IllegalAccessException | SecurityException e)
@@ -81,12 +81,12 @@ public abstract class PhantomPermission
 		return getParent() != null;
 	}
 
-	public PhantomPermission getParent()
+	public PrimalPermission getParent()
 	{
 		return parent;
 	}
 
-	public void setParent(PhantomPermission parent)
+	public void setParent(PrimalPermission parent)
 	{
 		this.parent = parent;
 	}
