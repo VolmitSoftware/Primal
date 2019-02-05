@@ -1,5 +1,6 @@
 package primal.lang.collection;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import primal.lang.json.JSONArray;
 
 /**
@@ -18,7 +18,7 @@ import primal.lang.json.JSONArray;
  * @param <T>
  *            the type of list T
  */
-public class GList<T> extends ObjectArrayList<T>
+public class GList<T> extends ArrayList<T>
 {
 	private static final long serialVersionUID = 4480457702775755227L;
 
@@ -657,7 +657,6 @@ public class GList<T> extends ObjectArrayList<T>
 	 *
 	 * @return the popped element
 	 */
-	@Override
 	public T pop()
 	{
 		if(isEmpty())

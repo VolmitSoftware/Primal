@@ -7,6 +7,7 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.HandlerList;
@@ -45,6 +46,30 @@ public abstract class PrimalPlugin extends JavaPlugin
 		stop();
 		unregisterAll();
 		instance = null;
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args)
+	{
+		GList<String> chain = new GList<String>().qadd(args);
+
+		for(GList<String> i : commands.k())
+		{
+			for(String j : i)
+			{
+				if(j.equalsIgnoreCase(label))
+				{
+					VirtualCommand cmd = commands.get(i);
+
+					if(cmd.hit(sender, chain.copy()))
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public void registerCommand(ICommand cmd)
@@ -89,7 +114,11 @@ public abstract class PrimalPlugin extends JavaPlugin
 					if(c.unregister(m))
 					{
 						it.remove();
-						// TODO log unregister command
+					}
+
+					else
+					{
+						Bukkit.getConsoleSender().sendMessage(getTag() + "Failed to unregister command " + c.getName());
 					}
 				}
 			}

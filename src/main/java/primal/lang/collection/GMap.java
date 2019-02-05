@@ -1,11 +1,10 @@
 package primal.lang.collection;
 
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-public class GMap<K, V> extends Object2ObjectOpenHashMap<K, V>
+public class GMap<K, V> extends HashMap<K, V>
 {
 	private static final long serialVersionUID = 1527847670799761130L;
 
