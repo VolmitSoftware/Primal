@@ -1,6 +1,8 @@
 package primal.bukkit.plugin;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import primal.bukkit.command.ICommand;
+import primal.bukkit.command.PrimalCommand;
 import primal.bukkit.command.RouterCommand;
 import primal.bukkit.command.VirtualCommand;
 import primal.lang.collection.GList;
@@ -37,6 +40,26 @@ public abstract class PrimalPlugin extends JavaPlugin
 	{
 		commands = new GMap<>();
 		instance = this;
+
+		for(Field i : getClass().getDeclaredFields())
+		{
+			if(i.isAnnotationPresent(primal.bukkit.command.Command.class))
+			{
+				try
+				{
+					i.setAccessible(true);
+					PrimalCommand pc = (PrimalCommand) i.getType().getConstructor().newInstance();
+					primal.bukkit.command.Command c = i.getAnnotation(primal.bukkit.command.Command.class);
+					registerCommand(pc, c.value());
+				}
+
+				catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException | SecurityException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
 		start();
 	}
 
