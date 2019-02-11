@@ -2,17 +2,145 @@ package primal.bukkit.nms;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
+
+import primal.bukkit.world.MaterialBlock;
+import primal.util.text.C;
 
 public interface CatalystHost extends PacketListener, Listener
 {
+	public void scroll(Player sender, int previous);
+
+	public int getAction(Object packetIn);
+
+	public Vector getDirection(Object packet);
+
+	public void spawnFallingBlock(int eid, UUID id, Location l, Player player, MaterialBlock mb);
+
+	public void removeEntity(int eid, Player p);
+
+	public void moveEntityRelative(int eid, Player p, double x, double y, double z, boolean onGround);
+
+	public void teleportEntity(int eid, Player p, Location l, boolean onGround);
+
+	public void spawnArmorStand(int eid, UUID id, Location l, int data, Player player);
+
+	public void sendTeam(Player p, String id, String name, String prefix, String suffix, C color, int mode);
+
+	public void addTeam(Player p, String id, String name, String prefix, String suffix, C color);
+
+	public void updateTeam(Player p, String id, String name, String prefix, String suffix, C color);
+
+	public void addToTeam(Player p, String id, String... entities);
+
+	public void removeTeam(Player p, String id);
+
+	public void removeFromTeam(Player p, String id, String... entities);
+
+	public void displayScoreboard(Player p, int slot, String id);
+
+	public void displayScoreboard(Player p, C c, String id);
+
+	public void sendNewObjective(Player p, String id, String name);
+
+	public void sendDeleteObjective(Player p, String id);
+
+	public void sendEditObjective(Player p, String id, String name);
+
+	public void sendScoreUpdate(Player p, String name, String objective, int score);
+
+	public void sendScoreRemove(Player p, String name, String objective);
+
+	/**
+	 * Send remove glowing color data fro mthe entity
+	 *
+	 * @param p
+	 *            the viewer
+	 * @param glowing
+	 *            the entity
+	 */
+	public void sendRemoveGlowingColorMeta(Player p, Entity glowing);
+
+	/**
+	 * Send a remove glowing color meta entity by uuid
+	 *
+	 * @param p
+	 *            the player
+	 * @param glowing
+	 *            the glowing uuid
+	 */
+	public void sendRemoveGlowingColorMetaEntity(Player p, UUID glowing);
+
+	/**
+	 * Send glow removal
+	 *
+	 * @param p
+	 *            the player
+	 * @param glowing
+	 *            the entity id
+	 * @param name
+	 *            the name
+	 */
+	public void sendRemoveGlowingColorMetaPlayer(Player p, UUID glowing, String name);
+
+	/**
+	 * Send glowing meta
+	 *
+	 * @param p
+	 *            the player
+	 * @param glowing
+	 *            the glower
+	 * @param color
+	 *            the color
+	 */
+	public void sendGlowingColorMeta(Player p, Entity glowing, C color);
+
+	/**
+	 * Send glowing meta
+	 *
+	 * @param p
+	 *            the player
+	 * @param euid
+	 *            the glower
+	 * @param color
+	 *            the color
+	 */
+	public void sendGlowingColorMetaEntity(Player p, UUID euid, C color);
+
+	/**
+	 * Send glowing meta
+	 *
+	 * @param p
+	 *            the player
+	 * @param euid
+	 *            the glower
+	 * @param color
+	 *            the color
+	 */
+	public void sendGlowingColorMetaName(Player p, String euid, C color);
+
+	/**
+	 * Update the passengers for the given player
+	 *
+	 * @param p
+	 *            the player
+	 * @param vehicle
+	 *            the vehicle
+	 * @param passengers
+	 *            the passenger entity ids
+	 */
+	public void updatePassengers(Player p, int vehicle, int... passengers);
+
 	/**
 	 * Send an advancement like a notification
 	 *
@@ -333,4 +461,6 @@ public interface CatalystHost extends PacketListener, Listener
 	public Set<Object> getTickListFluid(World world);
 
 	public Block getBlock(World world, Object tickListEntry);
+
+	public Object packetTabHeaderFooter(String h, String f);
 }

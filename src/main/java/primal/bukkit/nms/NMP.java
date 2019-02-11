@@ -23,6 +23,11 @@ public class NMP
 			return host.canSee(c, p);
 		}
 
+		public static void sendTablist(Player p, String h, String f)
+		{
+			new PacketBuffer().q(host.packetTabHeaderFooter(h, f)).flush(p);
+		}
+
 		/**
 		 * Can the player see the chunk holding this location?
 		 *

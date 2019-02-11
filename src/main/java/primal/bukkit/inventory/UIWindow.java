@@ -490,7 +490,7 @@ public class UIWindow implements Window, Listener
 	{
 		if(isVisible())
 		{
-			ItemStack[] is = inventory.getStorageContents();
+			ItemStack[] is = inventory.getContents();
 			GSet<ItemStack> isf = new GSet<ItemStack>();
 
 			for(int i = 0; i < is.length; i++)

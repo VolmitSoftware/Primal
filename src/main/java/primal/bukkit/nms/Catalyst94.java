@@ -2,6 +2,7 @@ package primal.bukkit.nms;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,34 +16,55 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_9_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_9_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import net.minecraft.server.v1_9_R2.Block;
 import net.minecraft.server.v1_9_R2.BlockPosition;
 import net.minecraft.server.v1_9_R2.EntityHuman.EnumChatVisibility;
 import net.minecraft.server.v1_9_R2.EnumMainHand;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent;
+import net.minecraft.server.v1_9_R2.IScoreboardCriteria.EnumScoreboardHealthDisplay;
 import net.minecraft.server.v1_9_R2.NextTickListEntry;
 import net.minecraft.server.v1_9_R2.Packet;
+import net.minecraft.server.v1_9_R2.PacketPlayInEntityAction;
+import net.minecraft.server.v1_9_R2.PacketPlayInFlying;
 import net.minecraft.server.v1_9_R2.PacketPlayInSettings;
 import net.minecraft.server.v1_9_R2.PacketPlayOutAnimation;
 import net.minecraft.server.v1_9_R2.PacketPlayOutBlockAction;
 import net.minecraft.server.v1_9_R2.PacketPlayOutBlockBreakAnimation;
 import net.minecraft.server.v1_9_R2.PacketPlayOutBlockChange;
 import net.minecraft.server.v1_9_R2.PacketPlayOutChat;
+import net.minecraft.server.v1_9_R2.PacketPlayOutEntity;
+import net.minecraft.server.v1_9_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove;
+import net.minecraft.server.v1_9_R2.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_9_R2.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_9_R2.PacketPlayOutGameStateChange;
+import net.minecraft.server.v1_9_R2.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_9_R2.PacketPlayOutMapChunk;
+import net.minecraft.server.v1_9_R2.PacketPlayOutMount;
+import net.minecraft.server.v1_9_R2.PacketPlayOutPlayerListHeaderFooter;
+import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardDisplayObjective;
+import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardObjective;
+import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardScore;
+import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardScore.EnumScoreboardAction;
+import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntity;
 import net.minecraft.server.v1_9_R2.PacketPlayOutTitle;
 import net.minecraft.server.v1_9_R2.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_9_R2.PacketPlayOutUnloadChunk;
 import net.minecraft.server.v1_9_R2.WorldServer;
 import primal.bukkit.plugin.PrimalPlugin;
 import primal.bukkit.sched.J;
+import primal.bukkit.world.MaterialBlock;
+import primal.lang.collection.GList;
 import primal.lang.collection.GSet;
+import primal.util.text.C;
 
 public class Catalyst94 extends CatalystPacketListener implements CatalystHost
 {
@@ -357,5 +379,390 @@ public class Catalyst94 extends CatalystPacketListener implements CatalystHost
 	public Set<Object> getTickListFluid(World world)
 	{
 		return new GSet<>();
+	}
+
+	@Override
+	public Object packetTabHeaderFooter(String h, String f)
+	{
+		PacketPlayOutPlayerListHeaderFooter p = new PacketPlayOutPlayerListHeaderFooter();
+		new V(p).set("a", IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + h + "\"}"));
+		new V(p).set("b", IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + f + "\"}"));
+
+		return p;
+	}
+
+	@Override
+	public void scroll(Player sender, int previous)
+	{
+		sendPacket(sender, new PacketPlayOutHeldItemSlot(previous));
+	}
+
+	@Override
+	public int getAction(Object packetIn)
+	{
+		return ((PacketPlayInEntityAction) packetIn).b().ordinal();
+	}
+
+	@Override
+	public Vector getDirection(Object packet)
+	{
+		float yaw = 0;
+		float pitch = 0;
+
+		try
+		{
+			Field a = PacketPlayInFlying.class.getDeclaredField("yaw");
+			Field b = PacketPlayInFlying.class.getDeclaredField("pitch");
+			a.setAccessible(true);
+			b.setAccessible(true);
+			yaw = (float) a.get(packet);
+			pitch = (float) b.get(packet);
+		}
+
+		catch(Exception e)
+		{
+
+		}
+
+		double pitchRadians = Math.toRadians(-pitch);
+		double yawRadians = Math.toRadians(-yaw);
+		double sinPitch = Math.sin(pitchRadians);
+		double cosPitch = Math.cos(pitchRadians);
+		double sinYaw = Math.sin(yawRadians);
+		double cosYaw = Math.cos(yawRadians);
+		Vector v = new Vector(-cosPitch * sinYaw, sinPitch, -cosPitch * cosYaw);
+		return new Vector(-v.getX(), v.getY(), -v.getZ());
+	}
+
+	@Override
+	public void spawnFallingBlock(int eid, UUID id, Location l, Player player, MaterialBlock mb)
+	{
+		@SuppressWarnings("deprecation")
+		int bid = mb.getMaterial().getId() + (mb.getData() << 12);
+		PacketPlayOutSpawnEntity m = new PacketPlayOutSpawnEntity();
+		new V(m).set("a", eid);
+		new V(m).set("b", id);
+		new V(m).set("c", l.getX());
+		new V(m).set("d", l.getY());
+		new V(m).set("e", l.getZ());
+		new V(m).set("f", 0);
+		new V(m).set("g", 0);
+		new V(m).set("h", 0);
+		new V(m).set("i", 0);
+		new V(m).set("j", 0);
+		new V(m).set("k", 70);
+		new V(m).set("l", bid);
+		sendPacket(player, m);
+	}
+
+	@Override
+	public void removeEntity(int eid, Player p)
+	{
+		PacketPlayOutEntityDestroy d = new PacketPlayOutEntityDestroy(eid);
+		sendPacket(p, d);
+	}
+
+	@Override
+	public void moveEntityRelative(int eid, Player p, double x, double y, double z, boolean onGround)
+	{
+		try
+		{
+			PacketPlayOutRelEntityMove r = new PacketPlayOutRelEntityMove();
+			Field a = PacketPlayOutEntity.class.getDeclaredField("a");
+			Field b = PacketPlayOutEntity.class.getDeclaredField("b");
+			Field c = PacketPlayOutEntity.class.getDeclaredField("c");
+			Field d = PacketPlayOutEntity.class.getDeclaredField("d");
+			Field e = PacketPlayOutEntity.class.getDeclaredField("e");
+			Field f = PacketPlayOutEntity.class.getDeclaredField("f");
+			Field g = PacketPlayOutEntity.class.getDeclaredField("g");
+			Field h = PacketPlayOutEntity.class.getDeclaredField("h");
+			a.setAccessible(true);
+			b.setAccessible(true);
+			c.setAccessible(true);
+			d.setAccessible(true);
+			e.setAccessible(true);
+			f.setAccessible(true);
+			g.setAccessible(true);
+			h.setAccessible(true);
+			a.set(r, eid);
+			b.set(r, (int) (x * 4096));
+			c.set(r, (int) (y * 4096));
+			d.set(r, (int) (z * 4096));
+			e.set(r, (byte) 0);
+			f.set(r, (byte) 0);
+			g.set(r, onGround);
+			h.set(r, onGround);
+			sendPacket(p, r);
+		}
+
+		catch(NoSuchFieldException e)
+		{
+			e.printStackTrace();
+		}
+
+		catch(SecurityException e)
+		{
+			e.printStackTrace();
+		}
+
+		catch(IllegalArgumentException e1)
+		{
+			e1.printStackTrace();
+		}
+
+		catch(IllegalAccessException e1)
+		{
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void teleportEntity(int eid, Player p, Location l, boolean onGround)
+	{
+		PacketPlayOutEntityTeleport t = new PacketPlayOutEntityTeleport();
+		new V(t).set("a", eid);
+		new V(t).set("b", l.getX());
+		new V(t).set("c", l.getY());
+		new V(t).set("d", l.getZ());
+		new V(t).set("e", (byte) 0);
+		new V(t).set("f", (byte) 0);
+		new V(t).set("g", onGround);
+		sendPacket(p, t);
+	}
+
+	@Override
+	public void spawnArmorStand(int eid, UUID id, Location l, int data, Player player)
+	{
+		PacketPlayOutSpawnEntity m = new PacketPlayOutSpawnEntity();
+		new V(m).set("a", eid);
+		new V(m).set("b", id);
+		new V(m).set("c", l.getX());
+		new V(m).set("d", l.getY());
+		new V(m).set("e", l.getZ());
+		new V(m).set("f", 0);
+		new V(m).set("g", 0);
+		new V(m).set("h", 0);
+		new V(m).set("i", 0);
+		new V(m).set("j", 0);
+		new V(m).set("k", 78);
+		new V(m).set("l", 0);
+		sendPacket(player, m);
+	}
+
+	@Override
+	public void sendTeam(Player p, String id, String name, String prefix, String suffix, C color, int mode)
+	{
+		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		new V(k).set("a", id);
+		new V(k).set("b", name);
+		new V(k).set("i", mode); // 0 = new, 1 = remove, 2 = update, 3 = addplayer, 4 = removeplayer
+		new V(k).set("c", prefix);
+		new V(k).set("d", suffix);
+		new V(k).set("j", 0);
+		new V(k).set("f", "never");
+		new V(k).set("e", "always");
+		new V(k).set("g", color.getMeta());
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void addTeam(Player p, String id, String name, String prefix, String suffix, C color)
+	{
+		sendTeam(p, id, name, prefix, suffix, color, 0);
+	}
+
+	@Override
+	public void updateTeam(Player p, String id, String name, String prefix, String suffix, C color)
+	{
+		sendTeam(p, id, name, prefix, suffix, color, 2);
+	}
+
+	@Override
+	public void removeTeam(Player p, String id)
+	{
+		sendTeam(p, id, "", "", "", C.WHITE, 1);
+	}
+
+	@Override
+	public void addToTeam(Player p, String id, String... entities)
+	{
+		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		new V(k).set("a", id);
+		new V(k).set("i", 3);
+		Collection<String> h = new V(k).get("h");
+		h.addAll(new GList<String>(entities));
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void removeFromTeam(Player p, String id, String... entities)
+	{
+		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		new V(k).set("a", id);
+		new V(k).set("i", 4);
+		Collection<String> h = new V(k).get("h");
+		h.addAll(new GList<String>(entities));
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void displayScoreboard(Player p, int slot, String id)
+	{
+		PacketPlayOutScoreboardDisplayObjective k = new PacketPlayOutScoreboardDisplayObjective();
+		new V(k).set("a", slot);
+		new V(k).set("b", id);
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void displayScoreboard(Player p, C slot, String id)
+	{
+		displayScoreboard(p, 3 + slot.getMeta(), id);
+	}
+
+	@Override
+	public void sendNewObjective(Player p, String id, String name)
+	{
+		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		new V(k).set("d", 0);
+		new V(k).set("a", id);
+		new V(k).set("b", name);
+		new V(k).set("c", EnumScoreboardHealthDisplay.INTEGER);
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void sendDeleteObjective(Player p, String id)
+	{
+		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		new V(k).set("d", 1);
+		new V(k).set("a", id);
+		new V(k).set("b", "memes");
+		new V(k).set("c", EnumScoreboardHealthDisplay.INTEGER);
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void sendEditObjective(Player p, String id, String name)
+	{
+		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		new V(k).set("d", 2);
+		new V(k).set("a", id);
+		new V(k).set("b", name);
+		new V(k).set("c", EnumScoreboardHealthDisplay.INTEGER);
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void sendScoreUpdate(Player p, String name, String objective, int score)
+	{
+		PacketPlayOutScoreboardScore k = new PacketPlayOutScoreboardScore();
+		new V(k).set("a", name);
+		new V(k).set("b", objective);
+		new V(k).set("c", score);
+		new V(k).set("d", EnumScoreboardAction.CHANGE);
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void sendScoreRemove(Player p, String name, String objective)
+	{
+		PacketPlayOutScoreboardScore k = new PacketPlayOutScoreboardScore();
+		new V(k).set("a", name);
+		new V(k).set("b", objective);
+		new V(k).set("c", 0);
+		new V(k).set("d", EnumScoreboardAction.REMOVE);
+		sendPacket(p, k);
+	}
+
+	@Override
+	public void sendRemoveGlowingColorMetaEntity(Player p, UUID glowing)
+	{
+		String c = teamCache.get(p.getUniqueId() + "-" + glowing);
+
+		if(c != null)
+		{
+			teamCache.remove(p.getUniqueId() + "-" + glowing);
+			removeFromTeam(p, c, glowing.toString());
+			removeTeam(p, c);
+		}
+	}
+
+	@Override
+	public void sendRemoveGlowingColorMetaPlayer(Player p, UUID glowing, String name)
+	{
+		String c = teamCache.get(p.getUniqueId() + "-" + glowing);
+
+		if(c != null)
+		{
+			teamCache.remove(p.getUniqueId() + "-" + glowing);
+			removeFromTeam(p, c, name);
+			removeTeam(p, c);
+		}
+	}
+
+	@Override
+	public void sendGlowingColorMeta(Player p, Entity glowing, C color)
+	{
+		if(glowing instanceof Player)
+		{
+			sendGlowingColorMetaName(p, p.getName(), color);
+		}
+
+		else
+		{
+			sendGlowingColorMetaEntity(p, glowing.getUniqueId(), color);
+		}
+	}
+
+	@Override
+	public void sendGlowingColorMetaEntity(Player p, UUID euid, C color)
+	{
+		sendGlowingColorMetaName(p, euid.toString(), color);
+	}
+
+	@Override
+	public void sendGlowingColorMetaName(Player p, String euid, C color)
+	{
+		String c = teamCache.get(p.getUniqueId() + "-" + euid);
+
+		if(c != null)
+		{
+			updateTeam(p, c, c, color.toString(), C.RESET.toString(), color);
+			sendEditObjective(p, c, c);
+		}
+
+		else
+		{
+			c = "v" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 15);
+			teamCache.put(p.getUniqueId() + "-" + euid, c);
+
+			addTeam(p, c, c, color.toString(), C.RESET.toString(), color);
+			updateTeam(p, c, c, color.toString(), C.RESET.toString(), color);
+
+			addToTeam(p, c, euid.toString());
+		}
+	}
+
+	@Override
+	public void sendRemoveGlowingColorMeta(Player p, Entity glowing)
+	{
+		String c = teamCache.get(p.getUniqueId() + "-" + glowing.getUniqueId());
+
+		if(c != null)
+		{
+			teamCache.remove(p.getUniqueId() + "-" + glowing.getUniqueId());
+			removeFromTeam(p, c, glowing instanceof Player ? glowing.getName() : glowing.getUniqueId().toString());
+			removeTeam(p, c);
+		}
+	}
+
+	@Override
+	public void updatePassengers(Player p, int vehicle, int... passengers)
+	{
+		PacketPlayOutMount mount = new PacketPlayOutMount();
+		new V(mount).set("a", vehicle);
+		new V(mount).set("b", passengers);
+		sendPacket(p, mount);
 	}
 }

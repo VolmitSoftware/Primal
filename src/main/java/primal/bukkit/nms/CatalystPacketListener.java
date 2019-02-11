@@ -8,14 +8,21 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 
 import primal.bukkit.plugin.PrimalPlugin;
+import primal.lang.collection.GMap;
 
 public abstract class CatalystPacketListener implements PacketListener
 {
 	private TinyProtocol protocol;
+	protected GMap<String, String> teamCache;
 	private Map<Class<?>, List<PacketHandler<?>>> inHandlers = new HashMap<>();
 	private Map<Class<?>, List<PacketHandler<?>>> outHandlers = new HashMap<>();
 	private List<PacketHandler<?>> inGlobal = new ArrayList<>();
 	private List<PacketHandler<?>> outGlobal = new ArrayList<>();
+
+	public CatalystPacketListener()
+	{
+		teamCache = new GMap<>();
+	}
 
 	@Override
 	public void openListener()
