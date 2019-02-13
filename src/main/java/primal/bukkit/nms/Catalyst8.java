@@ -25,8 +25,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import net.minecraft.server.v1_10_R1.PacketPlayOutScoreboardDisplayObjective;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject;
 import net.minecraft.server.v1_8_R3.EntityHuman.EnumChatVisibility;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.IScoreboardCriteria.EnumScoreboardHealthDisplay;
@@ -43,12 +45,12 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntity;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMove;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import net.minecraft.server.v1_8_R3.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardDisplayObjective;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardObjective;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore.EnumScoreboardAction;
@@ -453,7 +455,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	{
 		try
 		{
-			PacketPlayOutRelEntityMove r = new PacketPlayOutRelEntityMove();
+			PacketPlayOutRelEntityMove r = PacketCache.take(PacketPlayOutRelEntityMove.class);
 			Field a = PacketPlayOutEntity.class.getDeclaredField("a");
 			Field b = PacketPlayOutEntity.class.getDeclaredField("b");
 			Field c = PacketPlayOutEntity.class.getDeclaredField("c");
@@ -538,7 +540,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendTeam(Player p, String id, String name, String prefix, String suffix, C color, int mode)
 	{
-		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
 		new V(k).set("a", id);
 		new V(k).set("b", name);
 		new V(k).set("i", mode); // 0 = new, 1 = remove, 2 = update, 3 = addplayer, 4 = removeplayer
@@ -572,7 +574,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void addToTeam(Player p, String id, String... entities)
 	{
-		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
 		new V(k).set("a", id);
 		new V(k).set("i", 3);
 		Collection<String> h = new V(k).get("h");
@@ -583,7 +585,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void removeFromTeam(Player p, String id, String... entities)
 	{
-		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
 		new V(k).set("a", id);
 		new V(k).set("i", 4);
 		Collection<String> h = new V(k).get("h");
@@ -594,7 +596,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void displayScoreboard(Player p, int slot, String id)
 	{
-		PacketPlayOutScoreboardDisplayObjective k = new PacketPlayOutScoreboardDisplayObjective();
+		PacketPlayOutScoreboardDisplayObjective k = PacketCache.take(PacketPlayOutScoreboardDisplayObjective.class);
 		new V(k).set("a", slot);
 		new V(k).set("b", id);
 		sendPacket(p, k);
@@ -609,7 +611,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendNewObjective(Player p, String id, String name)
 	{
-		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
 		new V(k).set("d", 0);
 		new V(k).set("a", id);
 		new V(k).set("b", name);
@@ -620,7 +622,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendDeleteObjective(Player p, String id)
 	{
-		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
 		new V(k).set("d", 1);
 		new V(k).set("a", id);
 		new V(k).set("b", "memes");
@@ -631,7 +633,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendEditObjective(Player p, String id, String name)
 	{
-		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
 		new V(k).set("d", 2);
 		new V(k).set("a", id);
 		new V(k).set("b", name);
@@ -642,7 +644,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendScoreUpdate(Player p, String name, String objective, int score)
 	{
-		PacketPlayOutScoreboardScore k = new PacketPlayOutScoreboardScore();
+		PacketPlayOutScoreboardScore k = PacketCache.take(PacketPlayOutScoreboardScore.class);
 		new V(k).set("a", name);
 		new V(k).set("b", objective);
 		new V(k).set("c", score);
@@ -653,7 +655,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendScoreRemove(Player p, String name, String objective)
 	{
-		PacketPlayOutScoreboardScore k = new PacketPlayOutScoreboardScore();
+		PacketPlayOutScoreboardScore k = PacketCache.take(PacketPlayOutScoreboardScore.class);
 		new V(k).set("a", name);
 		new V(k).set("b", objective);
 		new V(k).set("c", 0);
@@ -747,5 +749,87 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	public void updatePassengers(Player p, int vehicle, int... passengers)
 	{
 		throw new UnsupportedOperationException("Unsupported in 1.8!");
+	}
+
+	@Override
+	public void sendEntityMetadata(Player p, int eid, Object... objects)
+	{
+		PacketPlayOutEntityMetadata md = PacketCache.take(PacketPlayOutEntityMetadata.class);
+		new V(md).set("a", eid);
+		List<WatchableObject> items = new GList<WatchableObject>();
+
+		for(Object i : objects)
+		{
+			items.add((WatchableObject) i);
+		}
+
+		new V(md).set("b", items);
+		sendPacket(p, md);
+	}
+
+	@Override
+	public void sendEntityMetadata(Player p, int eid, List<Object> objects)
+	{
+		sendEntityMetadata(p, eid, objects.toArray(new Object[objects.size()]));
+	}
+
+	@Override
+	public Object getMetaEntityRemainingAir(int airTicksLeft)
+	{
+		// Integer, Index 1
+		return new WatchableObject(2, 1, airTicksLeft);
+	}
+
+	@Override
+	public Object getMetaEntityCustomName(String name)
+	{
+		// String, Index 2
+		return new WatchableObject(4, 2, name);
+	}
+
+	@Override
+	public Object getMetaEntityProperties(boolean onFire, boolean crouched, boolean sprinting, boolean swimming, boolean invisible, boolean glowing, boolean flyingElytra)
+	{
+		byte bits = 0;
+		bits += onFire ? 1 : 0;
+		bits += crouched ? 2 : 0;
+		bits += sprinting ? 8 : 0;
+		bits += swimming ? 10 : 0;
+		bits += invisible ? 20 : 0;
+
+		// Byte, Index 0
+		return new WatchableObject(0, 0, bits);
+	}
+
+	@Override
+	public Object getMetaEntityGravity(boolean gravity)
+	{
+		return null;
+	}
+
+	@Override
+	public Object getMetaEntitySilenced(boolean silenced)
+	{
+		// Byte (Boolean), Index 4
+		return new WatchableObject(4, 0, (byte) (silenced ? 1 : 0));
+	}
+
+	@Override
+	public Object getMetaEntityCustomNameVisible(boolean visible)
+	{
+		// Byte (Boolean), Index 3
+		return new WatchableObject(3, 0, (byte) (visible ? 1 : 0));
+	}
+
+	@Override
+	public Object getMetaArmorStandProperties(boolean isSmall, boolean hasArms, boolean noBasePlate, boolean marker)
+	{
+		byte bits = 0;
+		bits += isSmall ? 1 : 0;
+		bits += hasArms ? 2 : 0;
+		bits += noBasePlate ? 8 : 0;
+		bits += marker ? 10 : 0;
+
+		return new WatchableObject(0, 11, bits);
 	}
 }

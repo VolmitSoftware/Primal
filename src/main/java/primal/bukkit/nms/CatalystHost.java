@@ -19,6 +19,24 @@ import primal.util.text.C;
 
 public interface CatalystHost extends PacketListener, Listener
 {
+	public void sendEntityMetadata(Player p, int eid, Object... objects);
+
+	public void sendEntityMetadata(Player p, int eid, List<Object> objects);
+
+	public Object getMetaEntityRemainingAir(int airTicksLeft);
+
+	public Object getMetaEntityCustomName(String name);
+
+	public Object getMetaEntityProperties(boolean onFire, boolean crouched, boolean sprinting, boolean swimming, boolean invisible, boolean glowing, boolean flyingElytra);
+
+	public Object getMetaEntityGravity(boolean gravity);
+
+	public Object getMetaEntitySilenced(boolean silenced);
+
+	public Object getMetaArmorStandProperties(boolean isSmall, boolean hasArmos, boolean noBasePlate, boolean marker);
+
+	public Object getMetaEntityCustomNameVisible(boolean visible);
+
 	public void scroll(Player sender, int previous);
 
 	public int getAction(Object packetIn);

@@ -25,8 +25,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import net.minecraft.server.v1_10_R1.PacketPlayOutScoreboardDisplayObjective;
 import net.minecraft.server.v1_9_R1.Block;
 import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.DataWatcher.Item;
+import net.minecraft.server.v1_9_R1.DataWatcherObject;
+import net.minecraft.server.v1_9_R1.DataWatcherRegistry;
 import net.minecraft.server.v1_9_R1.EntityHuman.EnumChatVisibility;
 import net.minecraft.server.v1_9_R1.EnumMainHand;
 import net.minecraft.server.v1_9_R1.IChatBaseComponent;
@@ -44,13 +48,13 @@ import net.minecraft.server.v1_9_R1.PacketPlayOutChat;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntity;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntity.PacketPlayOutRelEntityMove;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_9_R1.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_9_R1.PacketPlayOutGameStateChange;
 import net.minecraft.server.v1_9_R1.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_9_R1.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_9_R1.PacketPlayOutMount;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerListHeaderFooter;
-import net.minecraft.server.v1_9_R1.PacketPlayOutScoreboardDisplayObjective;
 import net.minecraft.server.v1_9_R1.PacketPlayOutScoreboardObjective;
 import net.minecraft.server.v1_9_R1.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_9_R1.PacketPlayOutScoreboardScore.EnumScoreboardAction;
@@ -468,7 +472,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	{
 		try
 		{
-			PacketPlayOutRelEntityMove r = new PacketPlayOutRelEntityMove();
+			PacketPlayOutRelEntityMove r = PacketCache.take(PacketPlayOutRelEntityMove.class);
 			Field a = PacketPlayOutEntity.class.getDeclaredField("a");
 			Field b = PacketPlayOutEntity.class.getDeclaredField("b");
 			Field c = PacketPlayOutEntity.class.getDeclaredField("c");
@@ -553,7 +557,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendTeam(Player p, String id, String name, String prefix, String suffix, C color, int mode)
 	{
-		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
 		new V(k).set("a", id);
 		new V(k).set("b", name);
 		new V(k).set("i", mode); // 0 = new, 1 = remove, 2 = update, 3 = addplayer, 4 = removeplayer
@@ -587,7 +591,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void addToTeam(Player p, String id, String... entities)
 	{
-		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
 		new V(k).set("a", id);
 		new V(k).set("i", 3);
 		Collection<String> h = new V(k).get("h");
@@ -598,7 +602,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void removeFromTeam(Player p, String id, String... entities)
 	{
-		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
+		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
 		new V(k).set("a", id);
 		new V(k).set("i", 4);
 		Collection<String> h = new V(k).get("h");
@@ -609,7 +613,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void displayScoreboard(Player p, int slot, String id)
 	{
-		PacketPlayOutScoreboardDisplayObjective k = new PacketPlayOutScoreboardDisplayObjective();
+		PacketPlayOutScoreboardDisplayObjective k = PacketCache.take(PacketPlayOutScoreboardDisplayObjective.class);
 		new V(k).set("a", slot);
 		new V(k).set("b", id);
 		sendPacket(p, k);
@@ -624,7 +628,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendNewObjective(Player p, String id, String name)
 	{
-		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
 		new V(k).set("d", 0);
 		new V(k).set("a", id);
 		new V(k).set("b", name);
@@ -635,7 +639,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendDeleteObjective(Player p, String id)
 	{
-		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
 		new V(k).set("d", 1);
 		new V(k).set("a", id);
 		new V(k).set("b", "memes");
@@ -646,7 +650,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendEditObjective(Player p, String id, String name)
 	{
-		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
+		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
 		new V(k).set("d", 2);
 		new V(k).set("a", id);
 		new V(k).set("b", name);
@@ -657,7 +661,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendScoreUpdate(Player p, String name, String objective, int score)
 	{
-		PacketPlayOutScoreboardScore k = new PacketPlayOutScoreboardScore();
+		PacketPlayOutScoreboardScore k = PacketCache.take(PacketPlayOutScoreboardScore.class);
 		new V(k).set("a", name);
 		new V(k).set("b", objective);
 		new V(k).set("c", score);
@@ -668,7 +672,7 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendScoreRemove(Player p, String name, String objective)
 	{
-		PacketPlayOutScoreboardScore k = new PacketPlayOutScoreboardScore();
+		PacketPlayOutScoreboardScore k = PacketCache.take(PacketPlayOutScoreboardScore.class);
 		new V(k).set("a", name);
 		new V(k).set("b", objective);
 		new V(k).set("c", 0);
@@ -765,5 +769,84 @@ public class Catalyst92 extends CatalystPacketListener implements CatalystHost
 		new V(mount).set("a", vehicle);
 		new V(mount).set("b", passengers);
 		sendPacket(p, mount);
+	}
+
+	@Override
+	public void sendEntityMetadata(Player p, int eid, Object... objects)
+	{
+		PacketPlayOutEntityMetadata md = PacketCache.take(PacketPlayOutEntityMetadata.class);
+		new V(md).set("a", eid);
+		List<Item<?>> items = new GList<Item<?>>();
+
+		for(Object i : objects)
+		{
+			items.add((Item<?>) i);
+		}
+
+		new V(md).set("b", items);
+		sendPacket(p, md);
+	}
+
+	@Override
+	public void sendEntityMetadata(Player p, int eid, List<Object> objects)
+	{
+		sendEntityMetadata(p, eid, objects.toArray(new Object[objects.size()]));
+	}
+
+	@Override
+	public Object getMetaEntityRemainingAir(int airTicksLeft)
+	{
+		return new Item<Integer>(new DataWatcherObject<>(1, DataWatcherRegistry.b), airTicksLeft);
+	}
+
+	@Override
+	public Object getMetaEntityCustomName(String name)
+	{
+		return new Item<String>(new DataWatcherObject<>(2, DataWatcherRegistry.d), name);
+	}
+
+	@Override
+	public Object getMetaEntityProperties(boolean onFire, boolean crouched, boolean sprinting, boolean swimming, boolean invisible, boolean glowing, boolean flyingElytra)
+	{
+		byte bits = 0;
+		bits += onFire ? 1 : 0;
+		bits += crouched ? 2 : 0;
+		bits += sprinting ? 8 : 0;
+		bits += swimming ? 10 : 0;
+		bits += invisible ? 20 : 0;
+		bits += glowing ? 40 : 0;
+		bits += flyingElytra ? 80 : 0;
+
+		return new Item<Byte>(new DataWatcherObject<>(0, DataWatcherRegistry.a), bits);
+	}
+
+	@Override
+	public Object getMetaEntityGravity(boolean gravity)
+	{
+		return new Item<Boolean>(new DataWatcherObject<>(5, DataWatcherRegistry.h), gravity);
+	}
+
+	@Override
+	public Object getMetaEntitySilenced(boolean silenced)
+	{
+		return new Item<Boolean>(new DataWatcherObject<>(4, DataWatcherRegistry.h), silenced);
+	}
+
+	@Override
+	public Object getMetaEntityCustomNameVisible(boolean visible)
+	{
+		return new Item<Boolean>(new DataWatcherObject<>(3, DataWatcherRegistry.h), visible);
+	}
+
+	@Override
+	public Object getMetaArmorStandProperties(boolean isSmall, boolean hasArms, boolean noBasePlate, boolean marker)
+	{
+		byte bits = 0;
+		bits += isSmall ? 1 : 0;
+		bits += hasArms ? 2 : 0;
+		bits += noBasePlate ? 8 : 0;
+		bits += marker ? 10 : 0;
+
+		return new Item<Byte>(new DataWatcherObject<>(11, DataWatcherRegistry.a), bits);
 	}
 }
