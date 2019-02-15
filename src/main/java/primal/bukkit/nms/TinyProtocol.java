@@ -106,7 +106,15 @@ public abstract class TinyProtocol implements Listener
 	{
 		if(e.getPlugin().equals(plugin))
 		{
-			close();
+			try
+			{
+				close();
+			}
+
+			catch(Throwable ex)
+			{
+
+			}
 		}
 	}
 

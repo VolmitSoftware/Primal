@@ -22,6 +22,7 @@ public abstract class CatalystPacketListener implements PacketListener
 	public CatalystPacketListener()
 	{
 		teamCache = new GMap<>();
+		PacketCache.reset();
 	}
 
 	@Override

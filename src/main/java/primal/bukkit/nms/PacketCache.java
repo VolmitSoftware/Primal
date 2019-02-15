@@ -1,57 +1,76 @@
 package primal.bukkit.nms;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.Supplier;
 
 import primal.lang.collection.GMap;
 
 public class PacketCache<T>
 {
 	private static GMap<Class<?>, PacketCache<?>> cache;
-	private final T t;
+	private final GMap<Long, T> t;
+	private final Class<? extends T> tt;
 
-	public PacketCache(T cached)
+	public PacketCache(Class<? extends T> tt)
 	{
-		t = cached;
+		t = new GMap<>();
+		this.tt = tt;
 	}
 
-	public synchronized T take()
+	private int size()
 	{
-		return t;
+		return t.size();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static synchronized <T> T take(Class<? extends T> c)
+	public T take()
 	{
-		if(!cache.containsKey(c))
+		Thread t = Thread.currentThread();
+
+		if(!this.t.containsKey(t.getId()))
 		{
 			try
 			{
-				cache.put(c, new PacketCache<T>((T) c.getConstructor().newInstance()));
+				this.t.put(t.getId(), tt.getConstructor().newInstance());
 			}
 
 			catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e)
 			{
 				e.printStackTrace();
-				return null;
 			}
+		}
+
+		return this.t.get(t.getId());
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T take(Class<? extends T> c)
+	{
+		if(!cache.containsKey(c))
+		{
+			cache.put(c, new PacketCache<T>(c));
 		}
 
 		return (T) cache.get(c).take();
 	}
 
-	public static synchronized <T> T take(Class<? extends T> c, Supplier<T> sup)
-	{
-		if(!cache.containsKey(c))
-		{
-			cache.put(c, new PacketCache<T>(sup.get()));
-		}
-
-		return take(c);
-	}
-
 	public static void reset()
 	{
 		cache = new GMap<>();
+	}
+
+	public static int totalSize()
+	{
+		int m = 0;
+
+		for(PacketCache<?> i : cache.v())
+		{
+			m += i.size();
+		}
+
+		return m;
+	}
+
+	static
+	{
+		reset();
 	}
 }

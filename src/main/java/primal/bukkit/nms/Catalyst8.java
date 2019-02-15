@@ -455,7 +455,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	{
 		try
 		{
-			PacketPlayOutRelEntityMove r = PacketCache.take(PacketPlayOutRelEntityMove.class);
+			PacketPlayOutRelEntityMove r = new PacketPlayOutRelEntityMove();
 			Field a = PacketPlayOutEntity.class.getDeclaredField("a");
 			Field b = PacketPlayOutEntity.class.getDeclaredField("b");
 			Field c = PacketPlayOutEntity.class.getDeclaredField("c");
@@ -540,7 +540,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendTeam(Player p, String id, String name, String prefix, String suffix, C color, int mode)
 	{
-		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
+		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
 		new V(k).set("a", id);
 		new V(k).set("b", name);
 		new V(k).set("i", mode); // 0 = new, 1 = remove, 2 = update, 3 = addplayer, 4 = removeplayer
@@ -574,7 +574,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void addToTeam(Player p, String id, String... entities)
 	{
-		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
+		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
 		new V(k).set("a", id);
 		new V(k).set("i", 3);
 		Collection<String> h = new V(k).get("h");
@@ -585,7 +585,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void removeFromTeam(Player p, String id, String... entities)
 	{
-		PacketPlayOutScoreboardTeam k = PacketCache.take(PacketPlayOutScoreboardTeam.class);
+		PacketPlayOutScoreboardTeam k = new PacketPlayOutScoreboardTeam();
 		new V(k).set("a", id);
 		new V(k).set("i", 4);
 		Collection<String> h = new V(k).get("h");
@@ -596,7 +596,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void displayScoreboard(Player p, int slot, String id)
 	{
-		PacketPlayOutScoreboardDisplayObjective k = PacketCache.take(PacketPlayOutScoreboardDisplayObjective.class);
+		PacketPlayOutScoreboardDisplayObjective k = new PacketPlayOutScoreboardDisplayObjective();
 		new V(k).set("a", slot);
 		new V(k).set("b", id);
 		sendPacket(p, k);
@@ -611,7 +611,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendNewObjective(Player p, String id, String name)
 	{
-		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
+		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
 		new V(k).set("d", 0);
 		new V(k).set("a", id);
 		new V(k).set("b", name);
@@ -622,7 +622,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendDeleteObjective(Player p, String id)
 	{
-		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
+		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
 		new V(k).set("d", 1);
 		new V(k).set("a", id);
 		new V(k).set("b", "memes");
@@ -633,7 +633,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendEditObjective(Player p, String id, String name)
 	{
-		PacketPlayOutScoreboardObjective k = PacketCache.take(PacketPlayOutScoreboardObjective.class);
+		PacketPlayOutScoreboardObjective k = new PacketPlayOutScoreboardObjective();
 		new V(k).set("d", 2);
 		new V(k).set("a", id);
 		new V(k).set("b", name);
@@ -644,7 +644,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendScoreUpdate(Player p, String name, String objective, int score)
 	{
-		PacketPlayOutScoreboardScore k = PacketCache.take(PacketPlayOutScoreboardScore.class);
+		PacketPlayOutScoreboardScore k = new PacketPlayOutScoreboardScore();
 		new V(k).set("a", name);
 		new V(k).set("b", objective);
 		new V(k).set("c", score);
@@ -655,7 +655,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendScoreRemove(Player p, String name, String objective)
 	{
-		PacketPlayOutScoreboardScore k = PacketCache.take(PacketPlayOutScoreboardScore.class);
+		PacketPlayOutScoreboardScore k = new PacketPlayOutScoreboardScore();
 		new V(k).set("a", name);
 		new V(k).set("b", objective);
 		new V(k).set("c", 0);
@@ -754,7 +754,7 @@ public class Catalyst8 extends CatalystPacketListener implements CatalystHost
 	@Override
 	public void sendEntityMetadata(Player p, int eid, Object... objects)
 	{
-		PacketPlayOutEntityMetadata md = PacketCache.take(PacketPlayOutEntityMetadata.class);
+		PacketPlayOutEntityMetadata md = new PacketPlayOutEntityMetadata();
 		new V(md).set("a", eid);
 		List<WatchableObject> items = new GList<WatchableObject>();
 
