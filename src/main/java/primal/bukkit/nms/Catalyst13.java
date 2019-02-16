@@ -17,6 +17,7 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_13_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +26,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import net.minecraft.server.v1_10_R1.PacketPlayOutScoreboardDisplayObjective;
 import net.minecraft.server.v1_13_R2.Block;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.DataWatcher.Item;
@@ -55,9 +55,11 @@ import net.minecraft.server.v1_13_R2.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_13_R2.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_13_R2.PacketPlayOutMount;
 import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerListHeaderFooter;
+import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardDisplayObjective;
 import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardObjective;
 import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_13_R2.PacketPlayOutSetSlot;
 import net.minecraft.server.v1_13_R2.PacketPlayOutSpawnEntity;
 import net.minecraft.server.v1_13_R2.PacketPlayOutTitle;
 import net.minecraft.server.v1_13_R2.PacketPlayOutTitle.EnumTitleAction;
@@ -872,5 +874,11 @@ public class Catalyst13 extends CatalystPacketListener implements CatalystHost
 		bits += marker ? 10 : 0;
 
 		return new Item<Byte>(new DataWatcherObject<>(11, DataWatcherRegistry.a), bits);
+	}
+
+	@Override
+	public void sendItemStack(Player p, ItemStack is, int slot)
+	{
+		sendPacket(p, new PacketPlayOutSetSlot(((CraftPlayer) p).getHandle().activeContainer.windowId, slot, CraftItemStack.asNMSCopy(is)));
 	}
 }

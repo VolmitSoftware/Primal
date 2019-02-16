@@ -19,6 +19,8 @@ import primal.util.text.C;
 
 public interface CatalystHost extends PacketListener, Listener
 {
+	public void sendItemStack(Player p, ItemStack is, int slot);
+
 	public void sendEntityMetadata(Player p, int eid, Object... objects);
 
 	public void sendEntityMetadata(Player p, int eid, List<Object> objects);

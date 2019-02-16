@@ -16,6 +16,7 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_9_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_9_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -58,6 +59,7 @@ import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardObjective;
 import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardScore.EnumScoreboardAction;
 import net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_9_R2.PacketPlayOutSetSlot;
 import net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntity;
 import net.minecraft.server.v1_9_R2.PacketPlayOutTitle;
 import net.minecraft.server.v1_9_R2.PacketPlayOutTitle.EnumTitleAction;
@@ -847,5 +849,11 @@ public class Catalyst94 extends CatalystPacketListener implements CatalystHost
 		bits += marker ? 10 : 0;
 
 		return new Item<Byte>(new DataWatcherObject<>(11, DataWatcherRegistry.a), bits);
+	}
+
+	@Override
+	public void sendItemStack(Player p, ItemStack is, int slot)
+	{
+		sendPacket(p, new PacketPlayOutSetSlot(((CraftPlayer) p).getHandle().activeContainer.windowId, slot, CraftItemStack.asNMSCopy(is)));
 	}
 }
