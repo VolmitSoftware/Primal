@@ -74,14 +74,14 @@ import primal.lang.collection.GList;
 import primal.lang.collection.GSet;
 import primal.util.text.C;
 
-public class Catalyst13 extends CatalystPacketListener implements CatalystHost
+public class Catalyst13_R2 extends CatalystPacketListener implements CatalystHost
 {
 	private Map<Player, PlayerSettings> playerSettings = new HashMap<>();
 
 	@Override
 	public void sendAdvancement(Player p, FrameType type, ItemStack is, String text)
 	{
-		AdvancementHolder13 a = new AdvancementHolder13(UUID.randomUUID().toString());
+		AdvancementHolder13_R2 a = new AdvancementHolder13_R2(UUID.randomUUID().toString());
 		a.withToast(true);
 		a.withDescription("?");
 		a.withFrame(type);

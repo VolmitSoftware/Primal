@@ -1,5 +1,25 @@
 package primal.bukkit.nms;
 
+import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.minecraft.server.v1_13_R1.IRegistry;
+import net.minecraft.server.v1_13_R1.Item;
+import net.minecraft.server.v1_13_R1.MinecraftKey;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.craftbukkit.v1_13_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_13_R1.util.CraftMagicNumbers;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import primal.bukkit.plugin.PrimalPlugin;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,42 +30,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_13_R2.util.CraftMagicNumbers;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import net.minecraft.server.v1_13_R2.IRegistry;
-import net.minecraft.server.v1_13_R2.Item;
-import net.minecraft.server.v1_13_R2.MinecraftKey;
-import primal.bukkit.plugin.PrimalPlugin;
-
-public class AdvancementHolder13
+public class AdvancementHolder13_R1
 {
 	private NamespacedKey id;
 	private String title, parent, trigger, icon, description, background, frame;
 	private Integer subID = 0, amount = 0;
 	private boolean announce, toast = true;
 	private List<ItemStack> items;
-	public List<AdvancementHolder13> holders = new ArrayList<AdvancementHolder13>();
+	public List<AdvancementHolder13_R1> holders = new ArrayList<AdvancementHolder13_R1>();
 
-	public void addAdvancment(AdvancementHolder13 api)
+	public void addAdvancment(AdvancementHolder13_R1 api)
 	{
 		NamespacedKey key = api.getID();
 
-		for(AdvancementHolder13 adAPI : this.holders)
+		for(AdvancementHolder13_R1 adAPI : this.holders)
 		{
 			if(adAPI.getID().toString().equalsIgnoreCase(key.toString()))
 			{
@@ -78,7 +76,7 @@ public class AdvancementHolder13
 		}
 	}
 
-	public AdvancementHolder13(String id)
+	public AdvancementHolder13_R1(String id)
 	{
 		this.id = new NamespacedKey(PrimalPlugin.instance, "story/" + id);
 		this.items = Lists.newArrayList();
@@ -95,27 +93,27 @@ public class AdvancementHolder13
 		return icon;
 	}
 
-	public AdvancementHolder13 withIcon(String icon)
+	public AdvancementHolder13_R1 withIcon(String icon)
 	{
 		this.icon = icon;
 		return this;
 	}
 
-	public AdvancementHolder13 withIcon(Material material)
+	public AdvancementHolder13_R1 withIcon(Material material)
 	{
 		this.icon = getMinecraftIDFrom(new ItemStack(material));
 		return this;
 	}
 
 	@SuppressWarnings("deprecation")
-	public AdvancementHolder13 withIcon(MaterialData material)
+	public AdvancementHolder13_R1 withIcon(MaterialData material)
 	{
 		this.icon = getMinecraftIDFrom(new ItemStack(material.getItemType()));
 		this.subID = (int) material.getData();
 		return this;
 	}
 
-	public AdvancementHolder13 withIconData(int subID)
+	public AdvancementHolder13_R1 withIconData(int subID)
 	{
 		this.subID = subID;
 		return this;
@@ -126,7 +124,7 @@ public class AdvancementHolder13
 		return description;
 	}
 
-	public AdvancementHolder13 withDescription(String description)
+	public AdvancementHolder13_R1 withDescription(String description)
 	{
 		this.description = description;
 		return this;
@@ -137,13 +135,13 @@ public class AdvancementHolder13
 		return background;
 	}
 
-	public AdvancementHolder13 withBackground(String url)
+	public AdvancementHolder13_R1 withBackground(String url)
 	{
 		this.background = url;
 		return this;
 	}
 
-	public AdvancementHolder13 withAmount(int i)
+	public AdvancementHolder13_R1 withAmount(int i)
 	{
 		this.amount = i;
 		return this;
@@ -154,7 +152,7 @@ public class AdvancementHolder13
 		return title;
 	}
 
-	public AdvancementHolder13 withTitle(String title)
+	public AdvancementHolder13_R1 withTitle(String title)
 	{
 		this.title = title;
 		return this;
@@ -165,13 +163,13 @@ public class AdvancementHolder13
 		return parent;
 	}
 
-	public AdvancementHolder13 withParent(String parent)
+	public AdvancementHolder13_R1 withParent(String parent)
 	{
 		this.parent = parent;
 		return this;
 	}
 
-	public AdvancementHolder13 withToast(boolean bool)
+	public AdvancementHolder13_R1 withToast(boolean bool)
 	{
 		this.toast = bool;
 		return this;
@@ -182,7 +180,7 @@ public class AdvancementHolder13
 		return trigger;
 	}
 
-	public AdvancementHolder13 withTrigger(String trigger)
+	public AdvancementHolder13_R1 withTrigger(String trigger)
 	{
 		this.trigger = trigger;
 		return this;
@@ -193,7 +191,7 @@ public class AdvancementHolder13
 		return items;
 	}
 
-	public AdvancementHolder13 withItem(ItemStack is)
+	public AdvancementHolder13_R1 withItem(ItemStack is)
 	{
 		items.add(is);
 		return this;
@@ -204,7 +202,7 @@ public class AdvancementHolder13
 		return frame;
 	}
 
-	public AdvancementHolder13 withFrame(FrameType frame)
+	public AdvancementHolder13_R1 withFrame(FrameType frame)
 	{
 		this.frame = frame.getName();
 		return this;
@@ -215,7 +213,7 @@ public class AdvancementHolder13
 		return announce;
 	}
 
-	public AdvancementHolder13 withAnnouncement(boolean announce)
+	public AdvancementHolder13_R1 withAnnouncement(boolean announce)
 	{
 		this.announce = announce;
 		return this;
