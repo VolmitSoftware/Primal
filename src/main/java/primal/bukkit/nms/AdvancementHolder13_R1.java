@@ -407,7 +407,7 @@ public class AdvancementHolder13_R1
 	public static String getMinecraftIDFrom(ItemStack stack)
 	{
 		final int check = Item.getId(CraftItemStack.asNMSCopy(stack).getItem());
-		final MinecraftKey matching = IRegistry.ITEM.keySet().stream().filter(key -> Item.getId(IRegistry.ITEM.get(key)) == check).findFirst().orElse(null);
+		final MinecraftKey matching = Item.REGISTRY.keySet().stream().filter(key -> Item.getId(Item.REGISTRY.get(key)) == check).findFirst().orElse(null);
 		return Objects.toString(matching, null);
 	}
 
