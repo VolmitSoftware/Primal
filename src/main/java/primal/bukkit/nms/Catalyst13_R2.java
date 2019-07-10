@@ -352,7 +352,7 @@ public class Catalyst13_R2 extends CatalystPacketListener implements CatalystHos
 	@Override
 	public ShadowChunk shadowCopy(Chunk at)
 	{
-		return null;
+		return new ShadowChunk13_R2(at);
 	}
 
 	@SuppressWarnings("unchecked")
