@@ -65,6 +65,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit130</artifactId>
+			<version>1.13.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit12</artifactId>
 			<version>1.12.2</version>
 			<scope>provided</scope>
