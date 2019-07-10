@@ -53,18 +53,18 @@ public class ShadowChunk14 implements ShadowChunk
 					for(int k = 0; k < 16; k++)
 					{
 						IBlockData ibd = sect.getBlocks().a(i, j, k);
-						int id = Block.getCombinedId(ibd);
+						int id = Block.REGISTRY_ID.getId(ibd);
 
 						if(id > 0)
 						{
-							setBlock(i, j, k, id, ibd.getBlock().getBlockData(ibd)); //.toLegacyData(ibd));
+							setBlock(i, j, k, id, 0);
 						}
 
-						setBlockLight(i, j, k, sect.getEmittedLightArray().a(i, j, k));
+						//setBlockLight(i, j, k, sect.getEmittedLightArray().a(i, j, k));
 
 						if(skylight)
 						{
-							setSkyLight(i, j, k, sect.getSkyLightArray().a(i, j, k));
+						//	setSkyLight(i, j, k, sect.getSkyLightArray().a(i, j, k));
 						}
 					}
 				}
@@ -120,7 +120,7 @@ public class ShadowChunk14 implements ShadowChunk
 
 		if(biomeModified)
 		{
-			packets.add(new PacketPlayOutUnloadChunk(nmsCopy.locX, nmsCopy.locZ));
+			packets.add(new PacketPlayOutUnloadChunk(nmsCopy.getPos().x, nmsCopy.getPos().z));
 			modMask = chunkMask;
 		}
 
@@ -198,10 +198,10 @@ public class ShadowChunk14 implements ShadowChunk
 
 		if(nmsCopy.getSections()[y >> 4] == null)
 		{
-			nmsCopy.getSections()[y >> 4] = new ChunkSection((y >> 4) << 4, skylight;
+		//	nmsCopy.getSections()[y >> 4] = new ChunkSection((y >> 4) << 4, skylight);
 		}
 
-		nmsCopy.getSections()[y >> 4].getSkyLightArray().a(x, y & 15, z, light);
+		//nmsCopy.getSections()[y >> 4].getSkyLightArray().a(x, y & 15, z, light);
 		modified[y >> 4] = true;
 	}
 
@@ -210,23 +210,23 @@ public class ShadowChunk14 implements ShadowChunk
 	{
 		if(nmsCopy.getSections()[y >> 4] == null)
 		{
-			nmsCopy.getSections()[y >> 4] = new ChunkSection((y >> 4) << 4, skylight);
+		//	nmsCopy.getSections()[y >> 4] = new ChunkSection((y >> 4) << 4, skylight);
 		}
 
-		nmsCopy.getSections()[y >> 4].getEmittedLightArray().a(x, y & 15, z, light);
+		//nmsCopy.getSections()[y >> 4].getEmittedLightArray().a(x, y & 15, z, light);
 		modified[y >> 4] = true;
 	}
 
 	@Override
 	public void setBiome(int x, int z, Biome bio)
 	{
-		setBiome(x, z, BiomeBase.REGISTRY_ID.a(CraftBlock.biomeToBiomeBase(bio)));
+		setBiome(x, z, BiomeBase.c.getId(CraftBlock.biomeToBiomeBase(bio)));
 	}
 
 	@Override
 	public void setBiome(int x, int z, int id)
 	{
-		nmsCopy.getBiomeIndex()[(z & 15) << 4 | x & 15] = (byte) id;
+		nmsCopy.getBiomeIndex()[(z & 15) << 4 | x & 15] = BiomeBase.c.fromId(id);
 		biomeModified = true;
 	}
 
@@ -258,13 +258,12 @@ public class ShadowChunk14 implements ShadowChunk
 	@Override
 	public void setBlock(int x, int y, int z, int type, int data)
 	{
-		@SuppressWarnings("deprecation")
-		IBlockData d = Block.getByCombinedId(type).getBlock().getBlockData();
+		IBlockData d = Block.REGISTRY_ID.fromId(type).getBlock().getBlockData();
 		int section = y >> 4;
 
 		if(nmsCopy.getSections()[section] == null)
 		{
-			nmsCopy.getSections()[section] = new ChunkSection(section << 4, skylight);
+		//	nmsCopy.getSections()[section] = new ChunkSection(section << 4, skylight);
 		}
 
 		nmsCopy.getSections()[section].setType(x, y & 15, z, d);
