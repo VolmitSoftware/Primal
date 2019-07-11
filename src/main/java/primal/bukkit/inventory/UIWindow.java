@@ -59,7 +59,8 @@ public class UIWindow implements Window, Listener
 			return;
 		}
 
-		if(!viewer.getOpenInventory().getTopInventory().getName().equals(title))
+		// 1.14 bukkit api change, removed getTitle() and getName() from Inventory.class
+		if(!viewer.getOpenInventory().getTitle().equals(title))
 		{
 			return;
 		}
@@ -218,7 +219,7 @@ public class UIWindow implements Window, Listener
 			return;
 		}
 
-		if(!e.getPlayer().getOpenInventory().getTopInventory().getName().equals(title))
+		if(!e.getPlayer().getOpenInventory().getTitle().equals(title))
 		{
 			return;
 		}
