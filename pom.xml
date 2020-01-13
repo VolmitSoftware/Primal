@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.volmit</groupId>
 	<artifactId>Primal</artifactId>
-	<version>1.0.42</version>
+	<version>1.0.43</version>
 	<name>Primal</name>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -51,6 +51,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- Craftbukkit Versions -->
+		<dependency>
+			<groupId>org.craftbukkit</groupId>
+			<artifactId>craftbukkit15</artifactId>
+			<version>15</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.craftbukkit</groupId>
 			<artifactId>craftbukkit14</artifactId>
