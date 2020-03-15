@@ -34,26 +34,16 @@ public abstract class CatalystPacketListener implements PacketListener
 			throw new RuntimeException("Listener is already open");
 		}
 
-		protocol = new TinyProtocol(PrimalPlugin.instance)
+		try
 		{
-			@Override
-			public Object onPacketOutAsync(Player reciever, Channel channel, Object packet)
+			protocol = new TinyProtocol(PrimalPlugin.instance)
 			{
-				Object p = packet;
-
-				for(PacketHandler<?> i : outGlobal)
+				@Override
+				public Object onPacketOutAsync(Player reciever, Channel channel, Object packet)
 				{
-					p = i.onPacket(reciever, p);
+					Object p = packet;
 
-					if(p == null)
-					{
-						break;
-					}
-				}
-
-				if(p != null && outHandlers.containsKey(packet.getClass()))
-				{
-					for(PacketHandler<?> i : outHandlers.get(packet.getClass()))
+					for(PacketHandler<?> i : outGlobal)
 					{
 						p = i.onPacket(reciever, p);
 
@@ -62,29 +52,29 @@ public abstract class CatalystPacketListener implements PacketListener
 							break;
 						}
 					}
-				}
 
-				return p;
-			}
-
-			@Override
-			public Object onPacketInAsync(Player sender, Channel channel, Object packet)
-			{
-				Object p = packet;
-
-				for(PacketHandler<?> i : inGlobal)
-				{
-					p = i.onPacket(sender, p);
-
-					if(p == null)
+					if(p != null && outHandlers.containsKey(packet.getClass()))
 					{
-						break;
+						for(PacketHandler<?> i : outHandlers.get(packet.getClass()))
+						{
+							p = i.onPacket(reciever, p);
+
+							if(p == null)
+							{
+								break;
+							}
+						}
 					}
+
+					return p;
 				}
 
-				if(p != null && inHandlers.containsKey(packet.getClass()))
+				@Override
+				public Object onPacketInAsync(Player sender, Channel channel, Object packet)
 				{
-					for(PacketHandler<?> i : inHandlers.get(packet.getClass()))
+					Object p = packet;
+
+					for(PacketHandler<?> i : inGlobal)
 					{
 						p = i.onPacket(sender, p);
 
@@ -93,11 +83,29 @@ public abstract class CatalystPacketListener implements PacketListener
 							break;
 						}
 					}
-				}
 
-				return p;
-			}
-		};
+					if(p != null && inHandlers.containsKey(packet.getClass()))
+					{
+						for(PacketHandler<?> i : inHandlers.get(packet.getClass()))
+						{
+							p = i.onPacket(sender, p);
+
+							if(p == null)
+							{
+								break;
+							}
+						}
+					}
+
+					return p;
+				}
+			};
+		}
+
+		catch(Throwable e)
+		{
+			// Derp
+		}
 
 		onOpened();
 	}
