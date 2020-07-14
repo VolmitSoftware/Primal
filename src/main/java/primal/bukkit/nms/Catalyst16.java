@@ -1,6 +1,5 @@
 package primal.bukkit.nms;
 
-import com.comphenix.net.sf.cglib.asm.$AnnotationVisitor;
 import net.minecraft.server.v1_16_R1.*;
 import net.minecraft.server.v1_16_R1.DataWatcher.Item;
 import net.minecraft.server.v1_16_R1.IScoreboardCriteria.EnumScoreboardHealthDisplay;

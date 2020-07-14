@@ -258,7 +258,6 @@ public class ShadowChunk13_R2 implements ShadowChunk
 	@Override
 	public void setBlock(int x, int y, int z, int type, int data)
 	{
-		@SuppressWarnings("deprecation")
 		IBlockData d = Block.REGISTRY_ID.fromId(type);
 		int section = y >> 4;
 

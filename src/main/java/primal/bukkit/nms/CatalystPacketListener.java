@@ -115,19 +115,20 @@ public abstract class CatalystPacketListener implements PacketListener
 	{
 		if(protocol == null)
 		{
-			throw new RuntimeException("Listener is already closed");
+			// Nobody cares
+			return;
 		}
-
+	
 		try
 		{
 			protocol.close();
 		}
-
+	
 		catch(Throwable e)
 		{
 			// Nobody cares
 		}
-
+	
 		inHandlers.clear();
 		outHandlers.clear();
 		inGlobal.clear();

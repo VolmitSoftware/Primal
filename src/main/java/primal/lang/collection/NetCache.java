@@ -1,8 +1,5 @@
 package primal.lang.collection;
 
-import primal.lang.collection.GList;
-import primal.lang.collection.GMap;
-
 public class NetCache<K, V>
 {
 	private final Resolver<K, V> resolver;

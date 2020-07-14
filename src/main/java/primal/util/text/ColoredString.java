@@ -1,7 +1,5 @@
 package primal.util.text;
 
-import primal.util.text.C;
-
 /**
  * Represents a colored String
  *
