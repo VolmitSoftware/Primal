@@ -5,6 +5,7 @@ import java.util.List;
 
 public enum NMSVersion
 {
+	R1_16,
 	R1_15,
 	R1_14,
 	R1_13,
@@ -18,7 +19,7 @@ public enum NMSVersion
 
 	public List<NMSVersion> getAboveInclusive()
 	{
-		List<NMSVersion> n = new ArrayList<NMSVersion>();
+		List<NMSVersion> n = new ArrayList<>();
 
 		for(NMSVersion i : values())
 		{
@@ -33,7 +34,7 @@ public enum NMSVersion
 
 	public List<NMSVersion> betweenInclusive(NMSVersion other)
 	{
-		List<NMSVersion> n = new ArrayList<NMSVersion>();
+		List<NMSVersion> n = new ArrayList<>();
 
 		for(NMSVersion i : values())
 		{
@@ -48,7 +49,7 @@ public enum NMSVersion
 
 	public List<NMSVersion> getBelowInclusive()
 	{
-		List<NMSVersion> n = new ArrayList<NMSVersion>();
+		List<NMSVersion> n = new ArrayList<>();
 
 		for(NMSVersion i : values())
 		{
@@ -123,6 +124,10 @@ public enum NMSVersion
 			return R1_15;
 		}
 
+		if(tryVersion("1_16_R1"))
+		{
+			return R1_16;
+		}
 		return null;
 	}
 
@@ -136,7 +141,7 @@ public enum NMSVersion
 
 		catch(Throwable e)
 		{
-
+			e.printStackTrace();
 		}
 
 		return false;
