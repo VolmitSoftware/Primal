@@ -22,6 +22,8 @@ public class Catalyst
 				return new Catalyst14();
 			case R1_15:
 				return new Catalyst15();
+			case R1_16:
+				return new Catalyst16();
 			case R1_8:
 				return new Catalyst8();
 			case R1_9_4:
