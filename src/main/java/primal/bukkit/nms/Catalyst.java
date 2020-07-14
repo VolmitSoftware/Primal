@@ -7,7 +7,7 @@ public class Catalyst
 	private static CatalystHost getHost()
 	{
 		NMSVersion v = NMSVersion.current();
-
+	
 		switch(v)
 		{
 			case R1_10:

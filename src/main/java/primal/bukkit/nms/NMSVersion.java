@@ -118,7 +118,7 @@ public enum NMSVersion
 		{
 			return R1_14;
 		}
-		
+
 		if(tryVersion("1_15_R1"))
 		{
 			return R1_15;
@@ -141,7 +141,7 @@ public enum NMSVersion
 
 		catch(Throwable e)
 		{
-			e.printStackTrace();
+
 		}
 
 		return false;
