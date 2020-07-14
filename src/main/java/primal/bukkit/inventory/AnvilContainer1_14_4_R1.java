@@ -1,4 +1,4 @@
-package net.wesjd.version.special;
+package primal.bukkit.inventory;
 
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.ChatMessage;
