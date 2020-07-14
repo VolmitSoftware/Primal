@@ -1,24 +1,23 @@
 package primal.bukkit.inventory;
 
-import net.minecraft.server.v1_12_R1.*;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+import net.minecraft.server.v1_16_R1.*;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R1.event.CraftEventFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-/**
- * {@link VersionWrapper} implemented for NMS version 1_12_R1
- * @author Wesley Smith
- * @since 1.1.1
- */
-public class Wrapper1_12_R1 implements VersionWrapper {
+public class Wrapper1_16_R1 implements VersionWrapper {
+    private int getRealNextContainerId(Player player) {
+        return toNMS(player).nextContainerCounter();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public int getNextContainerId(Player player, Object container) {
-        return toNMS(player).nextContainerCounter();
+        return ((AnvilContainer) container).getContainerId();
     }
 
     /**
@@ -34,7 +33,7 @@ public class Wrapper1_12_R1 implements VersionWrapper {
      */
     @Override
     public void sendPacketOpenWindow(Player player, int containerId, String guiTitle) {
-        toNMS(player).playerConnection.sendPacket(new PacketPlayOutOpenWindow(containerId, "minecraft:anvil", new ChatMessage(Blocks.ANVIL.a() + ".name")));
+        toNMS(player).playerConnection.sendPacket(new PacketPlayOutOpenWindow(containerId, Containers.ANVIL, new ChatMessage(guiTitle)));
     }
 
     /**
@@ -66,7 +65,7 @@ public class Wrapper1_12_R1 implements VersionWrapper {
      */
     @Override
     public void setActiveContainerId(Object container, int containerId) {
-        ((Container) container).windowId = containerId;
+        //noop
     }
 
     /**
@@ -90,11 +89,12 @@ public class Wrapper1_12_R1 implements VersionWrapper {
      */
     @Override
     public Object newContainerAnvil(Player player, String guiTitle) {
-        return new Wrapper1_12_R1.AnvilContainer(toNMS(player));
+        return new AnvilContainer(player, guiTitle);
     }
 
     /**
      * Turns a {@link Player} into an NMS one
+     *
      * @param player The player to be converted
      * @return the NMS EntityPlayer
      */
@@ -107,18 +107,23 @@ public class Wrapper1_12_R1 implements VersionWrapper {
      */
     private class AnvilContainer extends ContainerAnvil {
 
-        public AnvilContainer(EntityHuman entityhuman) {
-            super(entityhuman.inventory, entityhuman.world, new BlockPosition(0, 0, 0), entityhuman);
+        public AnvilContainer(Player player, String guiTitle) {
+            super(getRealNextContainerId(player), ((CraftPlayer) player).getHandle().inventory,
+                    ContainerAccess.at(((CraftWorld) player.getWorld()).getHandle(), new BlockPosition(0, 0, 0)));
             this.checkReachable = false;
+            setTitle(new ChatMessage(guiTitle));
         }
 
         @Override
         public void e() {
             super.e();
-            this.levelCost = 0;
+            this.levelCost.set(0);
+        }
+
+        public int getContainerId() {
+            return windowId;
         }
 
     }
 
 }
-

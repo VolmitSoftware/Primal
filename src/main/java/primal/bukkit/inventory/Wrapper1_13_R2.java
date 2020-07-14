@@ -1,17 +1,18 @@
 package primal.bukkit.inventory;
 
-import net.minecraft.server.v1_12_R1.*;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+import net.minecraft.server.v1_13_R2.*;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_13_R2.event.CraftEventFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 /**
- * {@link VersionWrapper} implemented for NMS version 1_12_R1
+ * {@link VersionWrapper} implemented for NMS version 1_13_R2
+ *
  * @author Wesley Smith
- * @since 1.1.1
+ * @since 1.2.1
  */
-public class Wrapper1_12_R1 implements VersionWrapper {
+public class Wrapper1_13_R2 implements VersionWrapper {
 
     /**
      * {@inheritDoc}
@@ -90,11 +91,12 @@ public class Wrapper1_12_R1 implements VersionWrapper {
      */
     @Override
     public Object newContainerAnvil(Player player, String guiTitle) {
-        return new Wrapper1_12_R1.AnvilContainer(toNMS(player));
+        return new Wrapper1_13_R2.AnvilContainer(toNMS(player));
     }
 
     /**
      * Turns a {@link Player} into an NMS one
+     *
      * @param player The player to be converted
      * @return the NMS EntityPlayer
      */
@@ -113,12 +115,11 @@ public class Wrapper1_12_R1 implements VersionWrapper {
         }
 
         @Override
-        public void e() {
-            super.e();
+        public void d() {
+            super.d();
             this.levelCost = 0;
         }
 
     }
 
 }
-
