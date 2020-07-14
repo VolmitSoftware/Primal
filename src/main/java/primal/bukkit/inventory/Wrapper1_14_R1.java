@@ -1,13 +1,21 @@
 package primal.bukkit.inventory;
 
-import net.minecraft.server.v1_14_R1.*;
-import net.wesjd.version.special.AnvilContainer1_14_4_R1;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_14_R1.event.CraftEventFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+
+import net.minecraft.server.v1_14_R1.BlockPosition;
+import net.minecraft.server.v1_14_R1.ChatMessage;
+import net.minecraft.server.v1_14_R1.Container;
+import net.minecraft.server.v1_14_R1.ContainerAccess;
+import net.minecraft.server.v1_14_R1.ContainerAnvil;
+import net.minecraft.server.v1_14_R1.Containers;
+import net.minecraft.server.v1_14_R1.EntityPlayer;
+import net.minecraft.server.v1_14_R1.PacketPlayOutCloseWindow;
+import net.minecraft.server.v1_14_R1.PacketPlayOutOpenWindow;
 
 public class Wrapper1_14_R1 implements VersionWrapper {
 
